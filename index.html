@@ -4,37 +4,55 @@
   <meta charset="UTF-8" />
   <title>Effort vs Impact</title>
   <style>
+    :root {
+      --bg: #f8fafc;
+      --axis: #1f2933;
+      --grid: #e5e7eb;
+      --text: #111827;
+    }
+
     body {
-      font-family: Arial, sans-serif;
       margin: 0;
-      padding: 16px;
-      background: #ffffff;
+      padding: 24px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
     }
 
     #container {
-      max-width: 800px;
+      max-width: 900px;
       margin: auto;
     }
 
-    #chart {
-      border: 1px solid #ccc;
-      background: #fafafa;
-      cursor: crosshair;
+    h1 {
+      font-size: 20px;
+      margin-bottom: 12px;
+    }
+
+    svg {
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      touch-action: none;
     }
 
     .axis {
-      stroke: #333;
+      stroke: var(--axis);
       stroke-width: 2;
+    }
+
+    .grid {
+      stroke: var(--grid);
+      stroke-width: 1;
     }
 
     .label {
       font-size: 12px;
+      fill: #374151;
       pointer-events: none;
-      user-select: none;
     }
 
     .point {
-      fill: #2563eb;
       cursor: grab;
     }
 
@@ -42,125 +60,202 @@
       cursor: grabbing;
     }
 
-    #inputArea {
-      margin-top: 12px;
+    #controls {
+      margin-top: 16px;
       display: flex;
       gap: 8px;
     }
 
     input {
       flex: 1;
-      padding: 8px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
       font-size: 14px;
     }
 
     button {
-      padding: 8px 12px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: none;
+      background: #2563eb;
+      color: white;
       font-size: 14px;
       cursor: pointer;
+    }
+
+    #trash {
+      position: absolute;
+      right: 40px;
+      bottom: 40px;
+      width: 70px;
+      height: 70px;
+      border-radius: 16px;
+      background: #fee2e2;
+      color: #991b1b;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.15);
     }
   </style>
 </head>
 <body>
-  <div id="container">
-    <svg id="chart" width="700" height="450"></svg>
+<div id="container">
+  <h1>Effort vs Impact</h1>
 
-    <div id="inputArea">
-      <input id="textInput" type="text" placeholder="Enter item name…" />
-      <button onclick="addPoint()">Add</button>
-    </div>
+  <svg id="chart" width="800" height="500"></svg>
+
+  <div id="controls">
+    <input id="textInput" placeholder="Add an initiative…" />
+    <button onclick="addPoint()">Add</button>
   </div>
+</div>
 
-  <script>
-    const svg = document.getElementById("chart");
-    const width = svg.clientWidth;
-    const height = svg.clientHeight;
-    const padding = 50;
+<div id="trash">🗑️</div>
 
-    let dragging = null;
-    let offsetX = 0;
-    let offsetY = 0;
+<script>
+const svg = document.getElementById("chart");
+const trash = document.getElementById("trash");
 
-    function drawAxes() {
-      svg.appendChild(line(padding, height - padding, width - padding, height - padding));
-      svg.appendChild(line(padding, padding, padding, height - padding));
+const width = svg.clientWidth;
+const height = svg.clientHeight;
+const padding = 60;
+const centerX = width / 2;
+const centerY = height / 2;
 
-      svg.appendChild(text("Effort →", width - padding - 40, height - padding + 30));
-      svg.appendChild(text("Impact ↑", padding - 40, padding - 10));
-    }
+let dragging = null;
+let offsetX = 0;
+let offsetY = 0;
 
-    function line(x1, y1, x2, y2) {
-      const l = document.createElementNS("http://www.w3.org/2000/svg", "line");
-      l.setAttribute("x1", x1);
-      l.setAttribute("y1", y1);
-      l.setAttribute("x2", x2);
-      l.setAttribute("y2", y2);
-      l.setAttribute("class", "axis");
-      return l;
-    }
+const colors = [
+  "#2563eb", "#16a34a", "#dc2626",
+  "#7c3aed", "#ea580c", "#0891b2"
+];
+let colorIndex = 0;
 
-    function text(content, x, y) {
-      const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
-      t.textContent = content;
-      t.setAttribute("x", x);
-      t.setAttribute("y", y);
-      t.setAttribute("class", "label");
-      return t;
-    }
+function drawGrid() {
+  const step = 50;
+  for (let x = padding; x <= width - padding; x += step) {
+    svg.appendChild(gridLine(x, padding, x, height - padding));
+  }
+  for (let y = padding; y <= height - padding; y += step) {
+    svg.appendChild(gridLine(padding, y, width - padding, y));
+  }
+}
 
-    function addPoint() {
-      const value = document.getElementById("textInput").value.trim();
-      if (!value) return;
+function gridLine(x1, y1, x2, y2) {
+  const l = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  l.setAttribute("x1", x1);
+  l.setAttribute("y1", y1);
+  l.setAttribute("x2", x2);
+  l.setAttribute("y2", y2);
+  l.setAttribute("class", "grid");
+  return l;
+}
 
-      const x = padding + Math.random() * (width - 2 * padding);
-      const y = padding + Math.random() * (height - 2 * padding);
+function drawAxes() {
+  svg.appendChild(axisLine(padding, centerY, width - padding, centerY));
+  svg.appendChild(axisLine(centerX, padding, centerX, height - padding));
 
-      const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  svg.appendChild(label("Effort →", width - padding + 10, centerY - 6));
+  svg.appendChild(label("← Negative Effort", padding - 90, centerY - 6));
+  svg.appendChild(label("Impact ↑", centerX + 6, padding - 10));
+  svg.appendChild(label("↓ Negative Impact", centerX + 6, height - padding + 20));
+}
 
-      const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-      circle.setAttribute("cx", x);
-      circle.setAttribute("cy", y);
-      circle.setAttribute("r", 6);
-      circle.setAttribute("class", "point");
+function axisLine(x1, y1, x2, y2) {
+  const l = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  l.setAttribute("x1", x1);
+  l.setAttribute("y1", y1);
+  l.setAttribute("x2", x2);
+  l.setAttribute("y2", y2);
+  l.setAttribute("class", "axis");
+  return l;
+}
 
-      const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
-      label.textContent = value;
-      label.setAttribute("x", x);
-      label.setAttribute("y", y - 10);
-      label.setAttribute("class", "label");
+function label(textContent, x, y) {
+  const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
+  t.textContent = textContent;
+  t.setAttribute("x", x);
+  t.setAttribute("y", y);
+  t.setAttribute("class", "label");
+  return t;
+}
 
-      group.appendChild(circle);
-      group.appendChild(label);
-      svg.appendChild(group);
+function addPoint() {
+  const text = textInput.value.trim();
+  if (!text) return;
 
-      circle.addEventListener("mousedown", e => {
-        dragging = { circle, label };
-        offsetX = e.offsetX - circle.getAttribute("cx");
-        offsetY = e.offsetY - circle.getAttribute("cy");
-      });
+  const color = colors[colorIndex++ % colors.length];
 
-      document.getElementById("textInput").value = "";
-    }
+  const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
 
-    svg.addEventListener("mousemove", e => {
-      if (!dragging) return;
+  const cx = centerX + (Math.random() - 0.5) * 200;
+  const cy = centerY + (Math.random() - 0.5) * 200;
 
-      let x = e.offsetX - offsetX;
-      let y = e.offsetY - offsetY;
+  const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+  circle.setAttribute("cx", cx);
+  circle.setAttribute("cy", cy);
+  circle.setAttribute("r", 7);
+  circle.setAttribute("fill", color);
+  circle.setAttribute("class", "point");
 
-      x = Math.max(padding, Math.min(width - padding, x));
-      y = Math.max(padding, Math.min(height - padding, y));
+  const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
+  t.textContent = text;
+  t.setAttribute("x", cx);
+  t.setAttribute("y", cy - 12);
+  t.setAttribute("text-anchor", "middle");
+  t.setAttribute("class", "label");
 
-      dragging.circle.setAttribute("cx", x);
-      dragging.circle.setAttribute("cy", y);
-      dragging.label.setAttribute("x", x);
-      dragging.label.setAttribute("y", y - 10);
-    });
+  group.appendChild(circle);
+  group.appendChild(t);
+  svg.appendChild(group);
 
-    window.addEventListener("mouseup", () => dragging = null);
+  circle.addEventListener("mousedown", e => {
+    dragging = { group, circle, t };
+    offsetX = e.offsetX - cx;
+    offsetY = e.offsetY - cy;
+    trash.style.display = "flex";
+  });
 
-    drawAxes();
-  </script>
+  textInput.value = "";
+}
+
+svg.addEventListener("mousemove", e => {
+  if (!dragging) return;
+
+  const x = Math.max(padding, Math.min(width - padding, e.offsetX - offsetX));
+  const y = Math.max(padding, Math.min(height - padding, e.offsetY - offsetY));
+
+  dragging.circle.setAttribute("cx", x);
+  dragging.circle.setAttribute("cy", y);
+  dragging.t.setAttribute("x", x);
+  dragging.t.setAttribute("y", y - 12);
+});
+
+window.addEventListener("mouseup", e => {
+  if (!dragging) return;
+
+  const rect = trash.getBoundingClientRect();
+  if (
+    e.clientX >= rect.left &&
+    e.clientX <= rect.right &&
+    e.clientY >= rect.top &&
+    e.clientY <= rect.bottom
+  ) {
+    dragging.group.remove();
+  }
+
+  trash.style.display = "none";
+  dragging = null;
+});
+
+// Init
+drawGrid();
+drawAxes();
+</script>
 </body>
 </html>
 

@@ -1,186 +1,166 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2575.4">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  <meta charset="UTF-8" />
+  <title>Effort vs Impact</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 16px;
+      background: #ffffff;
+    }
+
+    #container {
+      max-width: 800px;
+      margin: auto;
+    }
+
+    #chart {
+      border: 1px solid #ccc;
+      background: #fafafa;
+      cursor: crosshair;
+    }
+
+    .axis {
+      stroke: #333;
+      stroke-width: 2;
+    }
+
+    .label {
+      font-size: 12px;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .point {
+      fill: #2563eb;
+      cursor: grab;
+    }
+
+    .point:active {
+      cursor: grabbing;
+    }
+
+    #inputArea {
+      margin-top: 12px;
+      display: flex;
+      gap: 8px;
+    }
+
+    input {
+      flex: 1;
+      padding: 8px;
+      font-size: 14px;
+    }
+
+    button {
+      padding: 8px 12px;
+      font-size: 14px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="en"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1">&lt;meta charset="UTF-8" /&gt;</p>
-<p class="p1">&lt;title&gt;Effort vs Impact: Marketing Events&lt;/title&gt;</p>
-<p class="p1">&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>body {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-family: Arial, sans-serif;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin: 0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding: 16px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: #ffffff;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>#container {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>max-width: 800px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin: auto;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>#chart {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>border: 1px solid #ccc;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: #fafafa;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>cursor: crosshair;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.axis {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>stroke: #333;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>stroke-width: 2;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.label {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-size: 12px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>pointer-events: none;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>user-select: none;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.point {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>fill: #2563eb;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>cursor: grab;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.point:active {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>cursor: grabbing;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>#inputArea {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin-top: 12px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>display: flex;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>gap: 8px;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>input {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>flex: 1;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding: 8px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-size: 14px;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>button {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding: 8px 12px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-size: 14px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>cursor: pointer;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1">&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p1">&lt;div id="container"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;svg id="chart" width="700" height="450"&gt;&lt;/svg&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="inputArea"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;input id="textInput" type="text" placeholder="Enter item name…" /&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;button onclick="addPoint()"&gt;Add&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p1">&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;script&gt;</p>
-<p class="p1">const svg = document.getElementById("chart");</p>
-<p class="p1">const width = svg.clientWidth;</p>
-<p class="p1">const height = svg.clientHeight;</p>
-<p class="p1">const padding = 50;</p>
-<p class="p2"><br></p>
-<p class="p1">let dragging = null;</p>
-<p class="p1">let offsetX = 0;</p>
-<p class="p1">let offsetY = 0;</p>
-<p class="p2"><br></p>
-<p class="p1">// Draw axes</p>
-<p class="p1">function drawAxes() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>// X axis</p>
-<p class="p1"><span class="Apple-converted-space">  </span>svg.appendChild(line(padding, height - padding, width - padding, height - padding));</p>
-<p class="p1"><span class="Apple-converted-space">  </span>// Y axis</p>
-<p class="p1"><span class="Apple-converted-space">  </span>svg.appendChild(line(padding, padding, padding, height - padding));</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// Axis labels</p>
-<p class="p1"><span class="Apple-converted-space">  </span>svg.appendChild(text("Effort →", width - padding - 40, height - padding + 30));</p>
-<p class="p1"><span class="Apple-converted-space">  </span>svg.appendChild(text("Impact ↑", padding - 40, padding - 10));</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function line(x1, y1, x2, y2) {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const l = document.createElementNS("http://www.w3.org/2000/svg", "line");</p>
-<p class="p1"><span class="Apple-converted-space">  </span>l.setAttribute("x1", x1);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>l.setAttribute("y1", y1);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>l.setAttribute("x2", x2);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>l.setAttribute("y2", y2);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>l.setAttribute("class", "axis");</p>
-<p class="p1"><span class="Apple-converted-space">  </span>return l;</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function text(content, x, y) {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const t = document.createElementNS("http://www.w3.org/2000/svg", "text");</p>
-<p class="p1"><span class="Apple-converted-space">  </span>t.textContent = content;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>t.setAttribute("x", x);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>t.setAttribute("y", y);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>t.setAttribute("class", "label");</p>
-<p class="p1"><span class="Apple-converted-space">  </span>return t;</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function addPoint() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const value = document.getElementById("textInput").value.trim();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (!value) return;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>const x = padding + Math.random() * (width - 2 * padding);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const y = padding + Math.random() * (height - 2 * padding);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>const group = document.createElementNS("http://www.w3.org/2000/svg", "g");</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");</p>
-<p class="p1"><span class="Apple-converted-space">  </span>circle.setAttribute("cx", x);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>circle.setAttribute("cy", y);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>circle.setAttribute("r", 6);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>circle.setAttribute("class", "point");</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>const label = document.createElementNS("http://www.w3.org/2000/svg", "text");</p>
-<p class="p1"><span class="Apple-converted-space">  </span>label.textContent = value;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>label.setAttribute("x", x);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>label.setAttribute("y", y - 10);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>label.setAttribute("class", "label");</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>group.appendChild(circle);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>group.appendChild(label);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>svg.appendChild(group);</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>circle.addEventListener("mousedown", e =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>dragging = { circle, label };</p>
-<p class="p1"><span class="Apple-converted-space">    </span>offsetX = e.offsetX - circle.getAttribute("cx");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>offsetY = e.offsetY - circle.getAttribute("cy");</p>
-<p class="p1"><span class="Apple-converted-space">  </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById("textInput").value = "";</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">svg.addEventListener("mousemove", e =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (!dragging) return;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>let x = e.offsetX - offsetX;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let y = e.offsetY - offsetY;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>x = Math.max(padding, Math.min(width - padding, x));</p>
-<p class="p1"><span class="Apple-converted-space">  </span>y = Math.max(padding, Math.min(height - padding, y));</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>dragging.circle.setAttribute("cx", x);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>dragging.circle.setAttribute("cy", y);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>dragging.label.setAttribute("x", x);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>dragging.label.setAttribute("y", y - 10);</p>
-<p class="p1">});</p>
-<p class="p2"><br></p>
-<p class="p1">window.addEventListener("mouseup", () =&gt; dragging = null);</p>
-<p class="p2"><br></p>
-<p class="p1">// Init</p>
-<p class="p1">drawAxes();</p>
-<p class="p1">&lt;/script&gt;</p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+  <div id="container">
+    <svg id="chart" width="700" height="450"></svg>
+
+    <div id="inputArea">
+      <input id="textInput" type="text" placeholder="Enter item name…" />
+      <button onclick="addPoint()">Add</button>
+    </div>
+  </div>
+
+  <script>
+    const svg = document.getElementById("chart");
+    const width = svg.clientWidth;
+    const height = svg.clientHeight;
+    const padding = 50;
+
+    let dragging = null;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    function drawAxes() {
+      svg.appendChild(line(padding, height - padding, width - padding, height - padding));
+      svg.appendChild(line(padding, padding, padding, height - padding));
+
+      svg.appendChild(text("Effort →", width - padding - 40, height - padding + 30));
+      svg.appendChild(text("Impact ↑", padding - 40, padding - 10));
+    }
+
+    function line(x1, y1, x2, y2) {
+      const l = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      l.setAttribute("x1", x1);
+      l.setAttribute("y1", y1);
+      l.setAttribute("x2", x2);
+      l.setAttribute("y2", y2);
+      l.setAttribute("class", "axis");
+      return l;
+    }
+
+    function text(content, x, y) {
+      const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      t.textContent = content;
+      t.setAttribute("x", x);
+      t.setAttribute("y", y);
+      t.setAttribute("class", "label");
+      return t;
+    }
+
+    function addPoint() {
+      const value = document.getElementById("textInput").value.trim();
+      if (!value) return;
+
+      const x = padding + Math.random() * (width - 2 * padding);
+      const y = padding + Math.random() * (height - 2 * padding);
+
+      const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+
+      const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      circle.setAttribute("cx", x);
+      circle.setAttribute("cy", y);
+      circle.setAttribute("r", 6);
+      circle.setAttribute("class", "point");
+
+      const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      label.textContent = value;
+      label.setAttribute("x", x);
+      label.setAttribute("y", y - 10);
+      label.setAttribute("class", "label");
+
+      group.appendChild(circle);
+      group.appendChild(label);
+      svg.appendChild(group);
+
+      circle.addEventListener("mousedown", e => {
+        dragging = { circle, label };
+        offsetX = e.offsetX - circle.getAttribute("cx");
+        offsetY = e.offsetY - circle.getAttribute("cy");
+      });
+
+      document.getElementById("textInput").value = "";
+    }
+
+    svg.addEventListener("mousemove", e => {
+      if (!dragging) return;
+
+      let x = e.offsetX - offsetX;
+      let y = e.offsetY - offsetY;
+
+      x = Math.max(padding, Math.min(width - padding, x));
+      y = Math.max(padding, Math.min(height - padding, y));
+
+      dragging.circle.setAttribute("cx", x);
+      dragging.circle.setAttribute("cy", y);
+      dragging.label.setAttribute("x", x);
+      dragging.label.setAttribute("y", y - 10);
+    });
+
+    window.addEventListener("mouseup", () => dragging = null);
+
+    drawAxes();
+  </script>
 </body>
 </html>
+
